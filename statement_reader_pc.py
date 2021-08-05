@@ -1,11 +1,17 @@
 # Importing Pandas to read CSV file
 import pandas
+import openpyxl # import load_workbook
+from pandas.core.indexes.base import Index
+
+# Getting the name of the new Bank Statement - Format: MMMDD_MMMDD
+print("Enter the name of the file")
+file_name = "\\" + input()
+
+# Path to the pain excel file
+path = r'C:\Users\Ruben\Google Drive\Finance\Romancing Financing.xlsx'
 
 # Assigning CSV File into Python and Assigning Column Names
-df = pandas.read_csv('Apr27_May26.csv', 
-            parse_dates=['Date'], 
-            header=0, 
-            names=['Date', 'Reference', 'Amount', 'Place', 'Foreign'])
+df = pandas.read_csv(r'C:\Users\Ruben\Google Drive\Projects\Github\Sensitive Info\Bank Statements' + file_name + '.csv', header = None) 
 
 # Category sums to append with the amounts after labeling:
 sum_dictionary = {"groceries_sum" : 0, "eating_out_sum" : 0, "treats_or_snacks_sum" : 0, "alcohol_and_weed_sum" : 0, "electronics_sum" : 0, "home_sum" : 0, "dates_sum" : 0, "transportation_sum" : 0, "travel_sum" : 0, "miscellaneous_sum" : 0, "subscriptions_sum" : 0, "total" : 0}
@@ -50,6 +56,7 @@ for col, item in df.iterrows():
                     print("Purchase ignored.")
                     labeled = True
             else: # If the user has not entered 'i' or a valid option, the tool prompts them to play an input again.
+                    print("---------------")
                     print("!!! You entered an invalid label. Try again !!!")
                     # Confirming data inputs to the user:
                     print("---------------")
@@ -76,6 +83,11 @@ for item in sum_dictionary:
     else:
         print("* " + item + ": \t" + "$" + str(sum_dictionary[item]))
         sum_dictionary["total"] = sum_dictionary["total"] + sum_dictionary[item]
+        sum_df = pandas.DataFrame(list(sum_dictionary.items()), columns= ['Catagories','Totals'])
 
-
-df.to_csv('bank_statement_python.csv')
+# Copy data into a sheet on the Romancing Financing excel file
+excel_book = openpyxl.load_workbook(path)
+with pandas.ExcelWriter(path, mode='a') as writer:
+     writer.book = excel_book
+     writer.sheets = {worksheet.title: worksheet for worksheet in excel_book.worksheets}
+     sum_df.to_excel(writer, sheet_name='Raw Data', index=False)
