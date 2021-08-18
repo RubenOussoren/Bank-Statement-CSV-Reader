@@ -1,10 +1,11 @@
 # Importing Pandas to read CSV file
 import pandas
+import shutil
 import openpyxl # import load_workbook
 from pandas.core.indexes.base import Index
 
 # Getting the name of the new Bank Statement - Format: MMMDD_MMMDD
-print("Enter the name of the file")
+print("\nEnter the name of the file")
 file_name = input()
 
 # Path to the pain excel file
@@ -18,21 +19,13 @@ sum_dictionary = {"groceries_sum" : 0, "eating_out_sum" : 0, "treats_or_snacks_s
 label_dictionary = {"g":"groceries", "o":"eating_out", "k":"treats_or_snacks", "a":"alcohol_and_weed", "e":"electronics", "h":"home", "d":"dates", "t":"transportation", "l":"travel", "m":"miscellaneous", "s":"subscriptions"}
 
 # Confirming data inputs to the user:
-print("Let's start labelling your purchases :)!")
+categories = ['g = Groceries','o = Eating Out','k = Treats / Snacks','a = Alcohol & Weed','e = Electronics','h = Home','d = Dates','t = Transportation','l = Travel','m = Miscellaneous','s = Subscriptions']
+print("\nLet's start labelling your purchases :)!")
 print("Reminder, the inputs are: ")
 print("---------------")
-print("g = Groceries")
-print("o = Eating Out")
-print("k = Treats / Snacks")
-print("a = Alcohol & Weed")
-print("e = Electronics")
-print("h = Home")
-print("d = Dates")
-print("t = Transportation")
-print("l = Travel")
-print("m = Miscellaneous")
-print("s = Subscriptions")
-print("---------------")
+for category in categories:
+    print(category)
+print("---------------\n")
 
 # Looping through each line in the CSV file to enter category
 for col, item in df.iterrows():
@@ -56,24 +49,12 @@ for col, item in df.iterrows():
                     print("Purchase ignored.")
                     labeled = True
             else: # If the user has not entered 'i' or a valid option, the tool prompts them to play an input again.
-                    print("---------------")
-                    print("!!! You entered an invalid label. Try again !!!")
-                    # Confirming data inputs to the user:
-                    print("---------------")
+                    print("\nLet's start labelling your purchases :)!")
                     print("Reminder, the inputs are: ")
                     print("---------------")
-                    print("g = Groceries")
-                    print("o = Eating Out")
-                    print("k = Treats / Snacks")
-                    print("a = Alcohol & Weed")
-                    print("e = Electronics")
-                    print("h = Home")
-                    print("d = Dates")
-                    print("t = Transportation")
-                    print("l = Travel")
-                    print("m = Miscellaneous")
-                    print("s = Subscriptions")
-                    print("---------------")    
+                    for category in categories:
+                        print(category)
+                    print("---------------\n")  
 
 # The final sums that have been calculacted 
 print("********************************************")
@@ -84,6 +65,11 @@ for item in sum_dictionary:
         print("* " + item + ": \t" + "$" + str(sum_dictionary[item]))
         sum_dictionary["total"] = sum_dictionary["total"] + sum_dictionary[item]
         sum_df = pandas.DataFrame(list(sum_dictionary.items()), columns= ['Catagories','Totals'])
+
+# Backup Excel File before exporting to Excel File
+original = r'/Users/rubenoussoren/Google Drive/Finance/Romancing Financing.xlsx'
+target = r'/Users/rubenoussoren/Google Drive/Projects/Other Applications/Romancing Financing Backup/Backup Romancing Financing.xlsx'
+shutil.copyfile(original, target)
 
 # Copy data into a sheet on the Romancing Financing excel file
 excel_book = openpyxl.load_workbook(path)
